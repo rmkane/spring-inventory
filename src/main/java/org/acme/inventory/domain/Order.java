@@ -5,17 +5,25 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record Order(
-        UUID id,
-        UUID customerId,
-        OrderStatus status,
-        OffsetDateTime createdAt,
-        OffsetDateTime updatedAt,
-        OffsetDateTime paidAt,
-        OffsetDateTime shippedAt,
-        OffsetDateTime completedAt,
-        OffsetDateTime cancelledAt,
-        List<OrderItem> items) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Order {
+
+    private UUID id;
+    private UUID customerId;
+    private OrderStatus status;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
+    private OffsetDateTime paidAt;
+    private OffsetDateTime shippedAt;
+    private OffsetDateTime completedAt;
+    private OffsetDateTime cancelledAt;
+    private List<OrderItem> items;
 
     public BigDecimal total() {
         return items.stream().map(OrderItem::lineTotal).reduce(BigDecimal.ZERO, BigDecimal::add);

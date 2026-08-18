@@ -48,8 +48,8 @@ public class ProductManagerImpl implements ProductManager {
     @Transactional
     public Product createProduct(ProductRequest request) {
         Product product = productRepository.insert(request);
-        inventoryRepository.insert(product.id(), 0, 0);
-        return productRepository.findById(product.id()).orElseThrow();
+        inventoryRepository.insert(product.getId(), 0, 0);
+        return productRepository.findById(product.getId()).orElseThrow();
     }
 
     @Override

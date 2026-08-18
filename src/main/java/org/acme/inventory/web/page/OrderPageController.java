@@ -2,6 +2,7 @@ package org.acme.inventory.web.page;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
@@ -43,12 +44,12 @@ public class OrderPageController {
     public String detail(@PathVariable UUID id, Model model) {
         var order = orderService.getOrderById(id);
         model.addAttribute("order", order);
-        model.addAttribute("customer", customerService.getCustomerById(order.customerId()));
+        model.addAttribute("customer", customerService.getCustomerById(order.getCustomerId()));
         return "orders/detail";
     }
 
     private Map<UUID, Customer> customersById() {
         return customerService.getCustomers().stream()
-                .collect(Collectors.toMap(Customer::id, customer -> customer));
+                .collect(Collectors.toMap(Customer::getId, Function.identity()));
     }
 }

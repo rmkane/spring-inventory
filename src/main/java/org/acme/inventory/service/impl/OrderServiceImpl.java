@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
         }
         BigDecimal price = ResourceNotFoundException
                 .require(productManager.getProductById(item.productId()), "Product", item.productId())
-                .price();
+                .getPrice();
         return new OrderItemRequest(item.productId(), item.quantity(), price);
     }
 }

@@ -12,11 +12,11 @@ public class CustomerMapper {
 
     public CustomerResponse toResponse(Customer customer) {
         return new CustomerResponse(
-                customer.id(),
-                customer.name(),
-                customer.email(),
-                customer.createdAt(),
-                customer.updatedAt());
+                customer.getId(),
+                customer.getName(),
+                customer.getEmail(),
+                customer.getCreatedAt(),
+                customer.getUpdatedAt());
     }
 
     public List<CustomerResponse> toResponses(List<Customer> customers) {

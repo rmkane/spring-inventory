@@ -5,12 +5,20 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record Cart(
-        UUID id,
-        UUID customerId,
-        OffsetDateTime createdAt,
-        OffsetDateTime updatedAt,
-        List<CartItem> items) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Cart {
+
+    private UUID id;
+    private UUID customerId;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
+    private List<CartItem> items;
 
     public BigDecimal total() {
         return items.stream().map(CartItem::lineTotal).reduce(BigDecimal.ZERO, BigDecimal::add);

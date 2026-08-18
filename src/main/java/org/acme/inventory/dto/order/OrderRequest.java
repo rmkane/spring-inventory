@@ -11,9 +11,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import org.acme.inventory.domain.OrderStatus;
 
+// spotless:off
 @Schema(description = "Payload for creating or updating an order")
 public record OrderRequest(
-        @NotNull @Schema(description = "Customer placing the order") UUID customerId,
-        @Schema(description = "Order status. Defaults to PENDING on create.", example = "PENDING") OrderStatus status,
-        @NotEmpty @Schema(description = "Order line items") List<@Valid OrderItemRequest> items) {
+        @NotNull
+        @Schema(description = "Customer placing the order")
+        UUID customerId,
+
+        @Schema(description = "Order status. Defaults to PENDING on create.", example = "PENDING")
+        OrderStatus status,
+
+        @NotEmpty
+        @Schema(description = "Order line items")
+        List<@Valid OrderItemRequest> items) {
 }
+// spotless:on

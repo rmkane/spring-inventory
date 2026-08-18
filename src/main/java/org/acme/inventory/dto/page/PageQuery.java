@@ -2,13 +2,21 @@ package org.acme.inventory.dto.page;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+// spotless:off
 @Schema(name = "PageQuery", description = "List paging and sort controls")
 public record PageQuery(
-        @Schema(description = "1-based page number", example = "1", defaultValue = "1") Integer page,
-        @Schema(description = "Page size", example = "10", defaultValue = "10") Integer size,
-        @Schema(description = "Sort field name", example = "name") String sort,
-        @Schema(description = "Sort direction", example = "asc", allowableValues = {
-                "asc", "desc" }) String dir){
+        @Schema(description = "1-based page number", example = "1", defaultValue = "1")
+        Integer page,
+
+        @Schema(description = "Page size", example = "10", defaultValue = "10")
+        Integer size,
+
+        @Schema(description = "Sort field name", example = "name")
+        String sort,
+
+        @Schema(description = "Sort direction", example = "asc", allowableValues = { "asc", "desc" })
+        String dir) {
+    // spotless:on
 
     public static final int DEFAULT_PAGE = 1;
     public static final int DEFAULT_SIZE = 10;

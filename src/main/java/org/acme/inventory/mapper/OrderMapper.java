@@ -14,16 +14,16 @@ public class OrderMapper {
 
     public OrderResponse toResponse(Order order) {
         return new OrderResponse(
-                order.id(),
-                order.customerId(),
-                order.status(),
-                order.createdAt(),
-                order.updatedAt(),
-                order.paidAt(),
-                order.shippedAt(),
-                order.completedAt(),
-                order.cancelledAt(),
-                order.items().stream().map(this::toItemResponse).toList());
+                order.getId(),
+                order.getCustomerId(),
+                order.getStatus(),
+                order.getCreatedAt(),
+                order.getUpdatedAt(),
+                order.getPaidAt(),
+                order.getShippedAt(),
+                order.getCompletedAt(),
+                order.getCancelledAt(),
+                order.getItems().stream().map(this::toItemResponse).toList());
     }
 
     public List<OrderResponse> toResponses(List<Order> orders) {
@@ -32,9 +32,9 @@ public class OrderMapper {
 
     private OrderItemResponse toItemResponse(OrderItem item) {
         return new OrderItemResponse(
-                item.productId(),
-                item.productName(),
-                item.quantity(),
-                item.unitPrice());
+                item.getProductId(),
+                item.getProductName(),
+                item.getQuantity(),
+                item.getUnitPrice());
     }
 }

@@ -7,8 +7,15 @@ import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+// spotless:off
 @Schema(description = "A product and quantity in a cart")
 public record CartItemRequest(
-        @NotNull @Schema(description = "Product id") UUID productId,
-        @Min(1) @Schema(description = "Quantity to add", example = "2") int quantity) {
+        @NotNull
+        @Schema(description = "Product id")
+        UUID productId,
+
+        @Min(1)
+        @Schema(description = "Quantity to add", example = "2")
+        int quantity) {
 }
+// spotless:on

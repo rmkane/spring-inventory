@@ -9,9 +9,19 @@ import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+// spotless:off
 @Schema(description = "A product line on an order. Unit price is snapshotted from the catalog when omitted.")
 public record OrderItemRequest(
-        @NotNull @Schema(description = "Product id") UUID productId,
-        @Min(1) @Schema(description = "Quantity ordered", example = "1") int quantity,
-        @DecimalMin("0.00") @Schema(description = "Optional unit price override", example = "29.99") BigDecimal unitPrice) {
+        @NotNull
+        @Schema(description = "Product id")
+        UUID productId,
+
+        @Min(1)
+        @Schema(description = "Quantity ordered", example = "1")
+        int quantity,
+
+        @DecimalMin("0.00")
+        @Schema(description = "Optional unit price override", example = "29.99")
+        BigDecimal unitPrice) {
 }
+// spotless:on

@@ -136,6 +136,7 @@
 				<artifactId>spotless-maven-plugin</artifactId>
 				<configuration>
 					<java>
+						<toggleOffOn />
 						<importOrder>
 							<order>java,javax,jakarta,org,com,io,lombok,reactor,org.acme</order>
 						</importOrder>

@@ -5,8 +5,16 @@ import jakarta.validation.constraints.NotBlank;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+// spotless:off
 @Schema(description = "Payload for creating or updating a customer")
 public record CustomerRequest(
-        @NotBlank @Schema(description = "Customer name", example = "Ada Lovelace") String name,
-        @NotBlank @Email @Schema(description = "Unique email address", example = "ada@example.com") String email) {
+        @NotBlank
+        @Schema(description = "Customer name", example = "Ada Lovelace")
+        String name,
+
+        @NotBlank
+        @Email
+        @Schema(description = "Unique email address", example = "ada@example.com")
+        String email) {
 }
+// spotless:on

@@ -53,10 +53,10 @@ public class CustomerPageController {
     }
 
     private Map<UUID, List<Cart>> cartsByCustomer() {
-        return cartService.getCarts().stream().collect(Collectors.groupingBy(Cart::customerId));
+        return cartService.getCarts().stream().collect(Collectors.groupingBy(Cart::getCustomerId));
     }
 
     private Map<UUID, List<Order>> ordersByCustomer() {
-        return orderService.getOrders().stream().collect(Collectors.groupingBy(Order::customerId));
+        return orderService.getOrders().stream().collect(Collectors.groupingBy(Order::getCustomerId));
     }
 }

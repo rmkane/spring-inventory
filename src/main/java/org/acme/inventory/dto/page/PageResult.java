@@ -2,7 +2,10 @@ package org.acme.inventory.dto.page;
 
 import java.util.List;
 
-public record PageResult<T>(List<T> content, PageQuery query, long totalElements) {
+public record PageResult<T>(
+        List<T> content,
+        PageQuery query,
+        long totalElements) {
 
     public PageResult {
         content = List.copyOf(content);

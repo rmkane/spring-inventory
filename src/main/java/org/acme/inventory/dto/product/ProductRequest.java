@@ -8,9 +8,16 @@ import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+// spotless:off
 @Schema(description = "Payload for creating or updating a product")
 public record ProductRequest(
-        @NotBlank @Schema(description = "Product name", example = "Wireless mouse") String name,
-        @Schema(description = "Optional product description", example = "Ergonomic wireless mouse") String description,
-        @NotNull @DecimalMin("0.00") @Schema(description = "Unit price", example = "29.99") BigDecimal price) {
+        @NotBlank @Schema(description = "Product name", example = "Wireless mouse")
+        String name,
+
+        @Schema(description = "Optional product description", example = "Ergonomic wireless mouse")
+        String description,
+
+        @NotNull @DecimalMin("0.00") @Schema(description = "Unit price", example = "29.99")
+        BigDecimal price) {
 }
+// spotless:on

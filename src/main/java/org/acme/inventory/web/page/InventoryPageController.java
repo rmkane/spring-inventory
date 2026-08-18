@@ -2,6 +2,7 @@ package org.acme.inventory.web.page;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
@@ -40,6 +41,6 @@ public class InventoryPageController {
 
     private Map<UUID, Product> productsById() {
         return productService.getProducts().stream()
-                .collect(Collectors.toMap(Product::id, product -> product));
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
     }
 }

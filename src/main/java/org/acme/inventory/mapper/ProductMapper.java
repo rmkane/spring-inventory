@@ -12,14 +12,14 @@ public class ProductMapper {
 
     public ProductResponse toResponse(Product product) {
         return new ProductResponse(
-                product.id(),
-                product.name(),
-                product.description(),
-                product.price(),
-                product.quantityOnHand(),
-                product.quantityReserved(),
-                product.createdAt(),
-                product.updatedAt());
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getQuantityOnHand(),
+                product.getQuantityReserved(),
+                product.getCreatedAt(),
+                product.getUpdatedAt());
     }
 
     public List<ProductResponse> toResponses(List<Product> products) {

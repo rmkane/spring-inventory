@@ -12,10 +12,10 @@ public class InventoryMapper {
 
     public InventoryResponse toResponse(Inventory inventory) {
         return new InventoryResponse(
-                inventory.productId(),
-                inventory.quantityOnHand(),
-                inventory.quantityReserved(),
-                inventory.updatedAt());
+                inventory.getProductId(),
+                inventory.getQuantityOnHand(),
+                inventory.getQuantityReserved(),
+                inventory.getUpdatedAt());
     }
 
     public List<InventoryResponse> toResponses(List<Inventory> inventory) {

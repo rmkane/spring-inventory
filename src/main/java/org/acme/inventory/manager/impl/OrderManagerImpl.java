@@ -71,7 +71,7 @@ public class OrderManagerImpl implements OrderManager {
     @Transactional
     public Optional<Order> updateOrder(UUID id, OrderRequest request) {
         return orderRepository.findById(id).flatMap(existing -> {
-            OrderStatus status = request.status() == null ? existing.status() : request.status();
+            OrderStatus status = request.status() == null ? existing.getStatus() : request.status();
             StatusTimes times = StatusTimes.from(status, existing);
             return orderRepository.update(
                     id,
@@ -114,10 +114,10 @@ public class OrderManagerImpl implements OrderManager {
 
         private static StatusTimes from(OrderStatus status, Order existing) {
             OffsetDateTime now = OffsetDateTime.now();
-            OffsetDateTime paidAt = existing == null ? null : existing.paidAt();
-            OffsetDateTime shippedAt = existing == null ? null : existing.shippedAt();
-            OffsetDateTime completedAt = existing == null ? null : existing.completedAt();
-            OffsetDateTime cancelledAt = existing == null ? null : existing.cancelledAt();
+            OffsetDateTime paidAt = existing == null ? null : existing.getPaidAt();
+            OffsetDateTime shippedAt = existing == null ? null : existing.getShippedAt();
+            OffsetDateTime completedAt = existing == null ? null : existing.getCompletedAt();
+            OffsetDateTime cancelledAt = existing == null ? null : existing.getCancelledAt();
 
             return switch (status) {
             case PAID -> new StatusTimes(orNow(paidAt, now), shippedAt, completedAt, cancelledAt);

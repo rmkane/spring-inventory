@@ -14,12 +14,12 @@ public class CartMapper {
 
     public CartResponse toResponse(Cart cart) {
         return new CartResponse(
-                cart.id(),
-                cart.customerId(),
+                cart.getId(),
+                cart.getCustomerId(),
                 cart.total(),
-                cart.createdAt(),
-                cart.updatedAt(),
-                cart.items().stream().map(this::toItemResponse).toList());
+                cart.getCreatedAt(),
+                cart.getUpdatedAt(),
+                cart.getItems().stream().map(this::toItemResponse).toList());
     }
 
     public List<CartResponse> toResponses(List<Cart> carts) {
@@ -28,12 +28,12 @@ public class CartMapper {
 
     private CartItemResponse toItemResponse(CartItem item) {
         return new CartItemResponse(
-                item.productId(),
-                item.productName(),
-                item.quantity(),
-                item.unitPrice(),
+                item.getProductId(),
+                item.getProductName(),
+                item.getQuantity(),
+                item.getUnitPrice(),
                 item.lineTotal(),
-                item.addedAt(),
-                item.updatedAt());
+                item.getAddedAt(),
+                item.getUpdatedAt());
     }
 }

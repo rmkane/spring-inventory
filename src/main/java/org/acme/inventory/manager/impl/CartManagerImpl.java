@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -72,7 +73,7 @@ public class CartManagerImpl implements CartManager {
         return items.stream()
                 .collect(Collectors.toMap(
                         CartItemRequest::productId,
-                        item -> item,
+                        Function.identity(),
                         (left, right) -> new CartItemRequest(left.productId(), left.quantity() + right.quantity()),
                         LinkedHashMap::new))
                 .values()
