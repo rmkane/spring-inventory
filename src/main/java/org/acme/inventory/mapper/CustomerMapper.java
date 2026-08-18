@@ -20,6 +20,10 @@ public class CustomerMapper {
     }
 
     public List<CustomerResponse> toResponses(List<Customer> customers) {
-        return customers.stream().map(this::toResponse).toList();
+        // spotless:off
+        return customers.stream()
+            .map(this::toResponse)
+            .toList();
+        // spotless:on
     }
 }

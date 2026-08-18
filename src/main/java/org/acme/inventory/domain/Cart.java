@@ -20,7 +20,11 @@ public class Cart {
     private OffsetDateTime updatedAt;
     private List<CartItem> items;
 
+    // spotless:off
     public BigDecimal total() {
-        return items.stream().map(CartItem::lineTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return items.stream()
+            .map(CartItem::lineTotal)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+    // spotless:on
 }

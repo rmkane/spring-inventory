@@ -19,6 +19,10 @@ public class InventoryMapper {
     }
 
     public List<InventoryResponse> toResponses(List<Inventory> inventory) {
-        return inventory.stream().map(this::toResponse).toList();
+        // spotless:off
+        return inventory.stream()
+            .map(this::toResponse)
+            .toList();
+        // spotless:on
     }
 }

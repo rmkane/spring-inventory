@@ -23,6 +23,10 @@ public class ProductMapper {
     }
 
     public List<ProductResponse> toResponses(List<Product> products) {
-        return products.stream().map(this::toResponse).toList();
+        // spotless:off
+        return products.stream()
+            .map(this::toResponse)
+            .toList();
+        // spotless:on
     }
 }

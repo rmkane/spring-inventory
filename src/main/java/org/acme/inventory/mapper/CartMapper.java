@@ -23,7 +23,11 @@ public class CartMapper {
     }
 
     public List<CartResponse> toResponses(List<Cart> carts) {
-        return carts.stream().map(this::toResponse).toList();
+        // spotless:off
+        return carts.stream()
+            .map(this::toResponse)
+            .toList();
+        // spotless:on
     }
 
     private CartItemResponse toItemResponse(CartItem item) {

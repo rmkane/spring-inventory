@@ -27,7 +27,11 @@ public class OrderMapper {
     }
 
     public List<OrderResponse> toResponses(List<Order> orders) {
-        return orders.stream().map(this::toResponse).toList();
+        // spotless:off
+        return orders.stream()
+            .map(this::toResponse)
+            .toList();
+        // spotless:on
     }
 
     private OrderItemResponse toItemResponse(OrderItem item) {

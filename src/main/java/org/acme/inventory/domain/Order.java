@@ -25,7 +25,11 @@ public class Order {
     private OffsetDateTime cancelledAt;
     private List<OrderItem> items;
 
+    // spotless:off
     public BigDecimal total() {
-        return items.stream().map(OrderItem::lineTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return items.stream()
+            .map(OrderItem::lineTotal)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+    // spotless:on
 }
