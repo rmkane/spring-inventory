@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main(~{::title}, '', ~{::section})}">
+<head>
+    <title th:text="${problem.title}">Error</title>
+</head>
+<body>
+<section class="stack">
+    <p class="muted" th:text="${problem.status}">404</p>
+    <h1 class="page-title" th:text="${problem.title}">Error</h1>
+    <p th:text="${problem.detail}">Something went wrong.</p>
+    <p><a th:href="@{/}">Back to dashboard</a></p>
+</section>
+</body>
+</html>
