@@ -1,0 +1,24 @@
+package org.acme.inventory.mapper;
+
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import org.acme.inventory.domain.Inventory;
+import org.acme.inventory.dto.inventory.InventoryResponse;
+
+@Component
+public class InventoryMapper {
+
+    public InventoryResponse toResponse(Inventory inventory) {
+        return new InventoryResponse(
+                inventory.productId(),
+                inventory.quantityOnHand(),
+                inventory.quantityReserved(),
+                inventory.updatedAt());
+    }
+
+    public List<InventoryResponse> toResponses(List<Inventory> inventory) {
+        return inventory.stream().map(this::toResponse).toList();
+    }
+}

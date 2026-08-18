@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="main(title, activeNav, content)">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:replace="${title}">Inventory</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+    <div class="shell">
+        <header th:replace="~{fragments/header :: header}"></header>
+        <nav th:replace="~{fragments/nav :: nav(${activeNav})}"></nav>
+        <main class="content">
+            <th:block th:replace="${content}"/>
+        </main>
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
+    </div>
+</body>
+</html>

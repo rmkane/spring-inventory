@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main(~{::title}, 'customers', ~{::section})}">
+<head>
+    <title>Customers</title>
+</head>
+<body>
+<section>
+    <h1 class="page-title">Customers</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Carts</th>
+            <th>Orders</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="customer : ${customers}">
+            <td><a th:href="@{/ui/customers/{id}(id=${customer.id})}" th:text="${customer.name}">Name</a></td>
+            <td th:text="${customer.email}">email@example.com</td>
+            <td>
+                <th:block th:with="customerCarts=${cartsByCustomer.get(customer.id)}">
+                    <span th:if="${customerCarts == null}" class="muted">None</span>
+                    <a th:if="${customerCarts != null and #lists.size(customerCarts) == 1}"
+                       th:href="@{/ui/carts/{id}(id=${customerCarts[0].id})}">View cart</a>
+                    <a th:if="${customerCarts != null and #lists.size(customerCarts) > 1}"
+                       th:href="@{/ui/customers/{id}(id=${customer.id})}"
+                       th:text="|${#lists.size(customerCarts)} carts|">2 carts</a>
+                </th:block>
+            </td>
+            <td>
+                <th:block th:with="customerOrders=${ordersByCustomer.get(customer.id)}">
+                    <span th:if="${customerOrders == null}" class="muted">None</span>
+                    <a th:if="${customerOrders != null and #lists.size(customerOrders) == 1}"
+                       th:href="@{/ui/orders/{id}(id=${customerOrders[0].id})}">View order</a>
+                    <a th:if="${customerOrders != null and #lists.size(customerOrders) > 1}"
+                       th:href="@{/ui/customers/{id}(id=${customer.id})}"
+                       th:text="|${#lists.size(customerOrders)} orders|">2 orders</a>
+                </th:block>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

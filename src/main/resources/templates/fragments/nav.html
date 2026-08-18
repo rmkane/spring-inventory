@@ -1,0 +1,9 @@
+<nav xmlns:th="http://www.thymeleaf.org" th:fragment="nav(activeNav)" class="nav">
+    <a th:href="@{/}" th:classappend="${activeNav == 'home'} ? 'is-active'">Home</a>
+    <a th:href="@{/ui/products}" th:classappend="${activeNav == 'products'} ? 'is-active'">Products</a>
+    <a th:href="@{/ui/customers}" th:classappend="${activeNav == 'customers'} ? 'is-active'">Customers</a>
+    <a th:href="@{/ui/inventory}" th:classappend="${activeNav == 'inventory'} ? 'is-active'">Inventory</a>
+    <a th:href="@{/ui/carts}" th:classappend="${activeNav == 'carts'} ? 'is-active'">Carts</a>
+    <a th:href="@{/ui/orders}" th:classappend="${activeNav == 'orders'} ? 'is-active'">Orders</a>
+    <a th:href="@{/swagger-ui.html}" target="_blank" rel="noreferrer">API</a>
+</nav>

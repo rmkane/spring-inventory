@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main(~{::title}, 'inventory', ~{::section})}">
+<head>
+    <title>Inventory</title>
+</head>
+<body>
+<section>
+    <h1 class="page-title">Inventory</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>On hand</th>
+            <th>Reserved</th>
+            <th>Updated</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${inventory}">
+            <td><a th:href="@{/ui/products/{id}(id=${row.productId})}" th:text="${row.productId}">id</a></td>
+            <td th:text="${row.quantityOnHand}">0</td>
+            <td th:text="${row.quantityReserved}">0</td>
+            <td th:text="${#temporals.format(row.updatedAt, 'yyyy-MM-dd HH:mm')}">date</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

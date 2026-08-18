@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main(~{::title}, 'products', ~{::section})}">
+<head>
+    <title th:text="${product.name}">Product</title>
+</head>
+<body>
+<section class="stack">
+    <p><a th:href="@{/ui/products}">Back to products</a></p>
+    <article class="panel">
+        <h1 class="page-title" th:text="${product.name}">Product</h1>
+        <p th:text="${product.description}">Description</p>
+        <p>Price: <span th:text="${#numbers.formatDecimal(product.price, 1, 2)}">0.00</span></p>
+        <p>On hand: <span th:text="${product.quantityOnHand}">0</span></p>
+        <p>Reserved: <span th:text="${product.quantityReserved}">0</span></p>
+        <p class="muted">Added <span th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd HH:mm')}">date</span></p>
+    </article>
+</section>
+</body>
+</html>

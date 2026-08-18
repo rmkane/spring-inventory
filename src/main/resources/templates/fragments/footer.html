@@ -1,0 +1,4 @@
+<footer xmlns:th="http://www.thymeleaf.org" th:fragment="footer" class="footer">
+    <span>Spring Inventory</span>
+    <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2026</span>
+</footer>

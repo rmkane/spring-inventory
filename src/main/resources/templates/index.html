@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main(~{::title}, 'home', ~{::section})}">
+<head>
+    <title>Home</title>
+</head>
+<body>
+<section>
+    <h1 class="page-title">Dashboard</h1>
+    <p class="muted">Browse seeded catalog data or open the JSON API.</p>
+    <div class="cards">
+        <article class="card">
+            <h2 th:text="${productCount}">0</h2>
+            <a th:href="@{/ui/products}">Products</a>
+        </article>
+        <article class="card">
+            <h2 th:text="${customerCount}">0</h2>
+            <a th:href="@{/ui/customers}">Customers</a>
+        </article>
+        <article class="card">
+            <h2 th:text="${inventoryCount}">0</h2>
+            <a th:href="@{/ui/inventory}">Inventory</a>
+        </article>
+        <article class="card">
+            <h2 th:text="${cartCount}">0</h2>
+            <a th:href="@{/ui/carts}">Carts</a>
+        </article>
+        <article class="card">
+            <h2 th:text="${orderCount}">0</h2>
+            <a th:href="@{/ui/orders}">Orders</a>
+        </article>
+    </div>
+</section>
+</body>
+</html>

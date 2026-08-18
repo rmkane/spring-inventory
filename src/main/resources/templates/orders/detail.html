@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main(~{::title}, 'orders', ~{::section})}">
+<head>
+    <title>Order</title>
+</head>
+<body>
+<section class="stack">
+    <p><a th:href="@{/ui/orders}">Back to orders</a></p>
+    <article class="panel">
+        <h1 class="page-title">Order</h1>
+        <p>Status: <span th:text="${order.status}">PENDING</span></p>
+        <p>Customer: <a th:href="@{/ui/customers/{id}(id=${order.customerId})}" th:text="${order.customerId}">id</a></p>
+        <p class="muted">Created <span th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}">date</span></p>
+    </article>
+    <table>
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${order.items}">
+            <td><a th:href="@{/ui/products/{id}(id=${item.productId})}" th:text="${item.productName}">Name</a></td>
+            <td th:text="${item.quantity}">1</td>
+            <td th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)}">0.00</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

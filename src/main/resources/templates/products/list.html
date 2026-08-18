@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main(~{::title}, 'products', ~{::section})}">
+<head>
+    <title>Products</title>
+</head>
+<body>
+<section>
+    <h1 class="page-title">Products</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>On hand</th>
+            <th>Reserved</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td><a th:href="@{/ui/products/{id}(id=${product.id})}" th:text="${product.name}">Name</a></td>
+            <td th:text="${#numbers.formatDecimal(product.price, 1, 2)}">0.00</td>
+            <td th:text="${product.quantityOnHand}">0</td>
+            <td th:text="${product.quantityReserved}">0</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

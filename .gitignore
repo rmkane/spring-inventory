@@ -1,0 +1,13 @@
+# Maven
+target/
+
+# IntelliJ
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
