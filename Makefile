@@ -6,6 +6,12 @@ MVN ?= mvn
 DEBUG_PORT ?= 8787
 DEBUG_OPTS ?= -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:$(DEBUG_PORT)
 
+# Spotless/Lombok on JDK 23+; JDK 21 (CI) rejects this option.
+JAVA_SPEC_VERSION := $(shell java -XshowSettings:properties -version 2>&1 | awk -F= '/java.specification.version/ { gsub(/[[:space:]]/, "", $$2); print $$2; exit }')
+ifeq ($(shell test "$(JAVA_SPEC_VERSION)" -ge 23 >/dev/null 2>&1 && echo yes),yes)
+export MAVEN_OPTS += --sun-misc-unsafe-memory-access=allow
+endif
+
 ##@ Usage
 help: ## Display this help message
 	@awk 'BEGIN {FS = ":.*?## "} \
