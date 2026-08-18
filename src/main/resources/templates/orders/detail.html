@@ -9,7 +9,8 @@
     <article class="panel">
         <h1 class="page-title">Order</h1>
         <p>Status: <span th:text="${order.status}">PENDING</span></p>
-        <p>Customer: <a th:href="@{/ui/customers/{id}(id=${order.customerId})}" th:text="${order.customerId}">id</a></p>
+        <p>Customer: <a th:href="@{/ui/customers/{id}(id=${customer.id})}" th:text="${customer.name}">Customer</a></p>
+        <p>Total: <span th:text="${#numbers.formatDecimal(order.total(), 1, 2)}">0.00</span></p>
         <p class="muted">Created <span th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}">date</span></p>
     </article>
     <table>
@@ -18,6 +19,7 @@
             <th>Product</th>
             <th>Quantity</th>
             <th>Unit price</th>
+            <th>Line total</th>
         </tr>
         </thead>
         <tbody>
@@ -25,6 +27,7 @@
             <td><a th:href="@{/ui/products/{id}(id=${item.productId})}" th:text="${item.productName}">Name</a></td>
             <td th:text="${item.quantity}">1</td>
             <td th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)}">0.00</td>
+            <td th:text="${#numbers.formatDecimal(item.lineTotal(), 1, 2)}">0.00</td>
         </tr>
         </tbody>
     </table>

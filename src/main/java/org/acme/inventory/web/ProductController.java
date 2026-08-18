@@ -1,11 +1,11 @@
 package org.acme.inventory.web;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 import jakarta.validation.Valid;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +27,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import lombok.RequiredArgsConstructor;
 
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResponse;
 import org.acme.inventory.dto.product.ProductRequest;
 import org.acme.inventory.dto.product.ProductResponse;
 import org.acme.inventory.mapper.ProductMapper;
@@ -42,10 +44,10 @@ public class ProductController {
     private final ProductMapper productMapper;
 
     @GetMapping
-    @Operation(summary = "List products", description = "Returns every product with current inventory quantities.")
+    @Operation(summary = "List products", description = "Returns a page of products with current inventory quantities.")
     @ApiResponse(responseCode = "200", description = "Products returned")
-    public ResponseEntity<List<ProductResponse>> getProducts() {
-        return ResponseEntity.ok(productMapper.toResponses(productService.getProducts()));
+    public ResponseEntity<PageResponse<ProductResponse>> getProducts(@ParameterObject PageQuery pageQuery) {
+        return ResponseEntity.ok(PageResponse.from(productService.getProducts(pageQuery), productMapper::toResponse));
     }
 
     @GetMapping("/{id}")

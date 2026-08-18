@@ -8,4 +8,8 @@ public record OrderItem(
         String productName,
         int quantity,
         BigDecimal unitPrice) {
+
+    public BigDecimal lineTotal() {
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
+    }
 }

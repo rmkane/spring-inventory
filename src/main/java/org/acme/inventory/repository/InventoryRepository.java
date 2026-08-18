@@ -5,10 +5,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.acme.inventory.domain.Inventory;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 
 public interface InventoryRepository {
 
     List<Inventory> findAll();
+
+    PageResult<Inventory> findPage(PageQuery query);
+
+    long count();
 
     Optional<Inventory> findByProductId(UUID productId);
 

@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.Hidden;
 
 import lombok.RequiredArgsConstructor;
 
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.service.ProductService;
 
 @Hidden
@@ -23,8 +26,10 @@ public class ProductPageController {
     private final ProductService productService;
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("products", productService.getProducts());
+    public String list(@ModelAttribute("pageQuery") PageQuery pageQuery, Model model) {
+        PageResult<?> page = productService.getProducts(pageQuery);
+        PagedList.add(model, page, PagedList.PRODUCTS);
+        model.addAttribute("products", page.content());
         return "products/list";
     }
 

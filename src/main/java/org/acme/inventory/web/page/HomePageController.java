@@ -27,11 +27,11 @@ public class HomePageController {
 
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("productCount", productService.getProducts().size());
-        model.addAttribute("customerCount", customerService.getCustomers().size());
-        model.addAttribute("inventoryCount", inventoryService.getInventory().size());
-        model.addAttribute("cartCount", cartService.getCarts().size());
-        model.addAttribute("orderCount", orderService.getOrders().size());
+        model.addAttribute("productCount", productService.count());
+        model.addAttribute("customerCount", customerService.count());
+        model.addAttribute("inventoryCount", inventoryService.count());
+        model.addAttribute("cartCount", cartService.count());
+        model.addAttribute("orderCount", orderService.count());
         return "index";
     }
 }

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Cart;
 import org.acme.inventory.dto.cart.CartRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.exception.ResourceNotFoundException;
 import org.acme.inventory.manager.CartManager;
 import org.acme.inventory.service.CartService;
@@ -22,6 +24,16 @@ public class CartServiceImpl implements CartService {
     @Override
     public List<Cart> getCarts() {
         return cartManager.getCarts();
+    }
+
+    @Override
+    public PageResult<Cart> getCarts(PageQuery query) {
+        return cartManager.getCarts(query);
+    }
+
+    @Override
+    public long count() {
+        return cartManager.count();
     }
 
     @Override

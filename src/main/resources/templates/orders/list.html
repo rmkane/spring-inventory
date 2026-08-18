@@ -9,21 +9,27 @@
     <table>
         <thead>
         <tr>
-            <th>Order</th>
-            <th>Customer</th>
-            <th>Status</th>
-            <th>Created</th>
+            <th th:replace="~{fragments/sort :: header('/ui/orders', 'id', 'Order')}">Order</th>
+            <th th:replace="~{fragments/sort :: header('/ui/orders', 'customerId', 'Customer')}">Customer</th>
+            <th th:replace="~{fragments/sort :: header('/ui/orders', 'status', 'Status')}">Status</th>
+            <th th:replace="~{fragments/sort :: header('/ui/orders', 'items', 'Items')}">Items</th>
+            <th th:replace="~{fragments/sort :: header('/ui/orders', 'total', 'Total')}">Total</th>
+            <th th:replace="~{fragments/sort :: header('/ui/orders', 'createdAt', 'Created')}">Created</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="order : ${orders}">
             <td><a th:href="@{/ui/orders/{id}(id=${order.id})}" th:text="${order.id}">id</a></td>
-            <td><a th:href="@{/ui/customers/{id}(id=${order.customerId})}" th:text="${order.customerId}">id</a></td>
+            <td><a th:href="@{/ui/customers/{id}(id=${order.customerId})}"
+                   th:text="${customersById.get(order.customerId).name}">Customer</a></td>
             <td th:text="${order.status}">PENDING</td>
+            <td th:text="${#lists.size(order.items)}">0</td>
+            <td th:text="${#numbers.formatDecimal(order.total(), 1, 2)}">0.00</td>
             <td th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}">date</td>
         </tr>
         </tbody>
     </table>
+    <nav th:replace="~{fragments/pager :: pager('/ui/orders')}"></nav>
 </section>
 </body>
 </html>

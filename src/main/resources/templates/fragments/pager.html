@@ -1,0 +1,26 @@
+<nav xmlns:th="http://www.thymeleaf.org" class="pager" th:fragment="pager(action)">
+    <div class="pager-nav" role="navigation" aria-label="Pagination">
+        <a class="pager-btn"
+           th:classappend="${page.isFirst()} ? ' is-disabled'"
+           th:href="${page.isFirst()} ? null : @{${action}(page=1, size=${pageQuery.size}, sort=${pageQuery.sort}, dir=${pageQuery.dir})}">First</a>
+        <a class="pager-btn"
+           th:classappend="${!page.hasPrevious()} ? ' is-disabled'"
+           th:href="${page.hasPrevious()} ? @{${action}(page=${page.page - 1}, size=${pageQuery.size}, sort=${pageQuery.sort}, dir=${pageQuery.dir})} : null">Prev</a>
+        <span class="pager-current"
+              th:text="|${page.page} of ${page.lastPage}|">1 of 1</span>
+        <a class="pager-btn"
+           th:classappend="${!page.hasNext()} ? ' is-disabled'"
+           th:href="${page.hasNext()} ? @{${action}(page=${page.page + 1}, size=${pageQuery.size}, sort=${pageQuery.sort}, dir=${pageQuery.dir})} : null">Next</a>
+        <a class="pager-btn"
+           th:classappend="${page.isLast()} ? ' is-disabled'"
+           th:href="${page.isLast()} ? null : @{${action}(page=${page.lastPage}, size=${pageQuery.size}, sort=${pageQuery.sort}, dir=${pageQuery.dir})}">Last</a>
+    </div>
+    <label class="pager-size">Page size
+        <select onchange="window.location.href = this.value">
+            <option th:each="pageSize : ${pageSizes}"
+                    th:value="@{${action}(page=1, size=${pageSize}, sort=${pageQuery.sort}, dir=${pageQuery.dir})}"
+                    th:selected="${page.size == pageSize}"
+                    th:text="${pageSize}">10</option>
+        </select>
+    </label>
+</nav>

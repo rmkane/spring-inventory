@@ -1,6 +1,7 @@
 package org.acme.inventory.repository.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,8 +14,11 @@ import org.springframework.stereotype.Repository;
 import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Product;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.dto.product.ProductRequest;
 import org.acme.inventory.repository.ProductRepository;
+import org.acme.inventory.repository.SqlPaging;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,11 +40,37 @@ public class ProductRepositoryImpl implements ProductRepository {
             LEFT JOIN inventory i ON i.product_id = p.id
             """;
 
+    private static final Map<String, String> SORT_COLUMNS = Map.of(
+            "name", "p.name",
+            "price", "p.price",
+            "quantityOnHand", "i.quantity_on_hand",
+            "quantityReserved", "i.quantity_reserved",
+            "createdAt", "p.created_at",
+            "updatedAt", "p.updated_at");
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
     public List<Product> findAll() {
         return jdbcTemplate.query(SELECT_PRODUCTS, PRODUCT_MAPPER);
+    }
+
+    @Override
+    public PageResult<Product> findPage(PageQuery query) {
+        return SqlPaging.fetch(
+                jdbcTemplate,
+                "SELECT count(*) FROM products",
+                SELECT_PRODUCTS,
+                query,
+                SORT_COLUMNS,
+                "name",
+                "asc",
+                PRODUCT_MAPPER);
+    }
+
+    @Override
+    public long count() {
+        return SqlPaging.count(jdbcTemplate, "SELECT count(*) FROM products");
     }
 
     @Override

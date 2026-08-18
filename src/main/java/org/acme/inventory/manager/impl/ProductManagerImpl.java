@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Product;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.dto.product.ProductRequest;
 import org.acme.inventory.manager.ProductManager;
 import org.acme.inventory.repository.InventoryRepository;
@@ -25,6 +27,16 @@ public class ProductManagerImpl implements ProductManager {
     @Override
     public List<Product> getProducts() {
         return productRepository.findAll();
+    }
+
+    @Override
+    public PageResult<Product> getProducts(PageQuery query) {
+        return productRepository.findPage(query);
+    }
+
+    @Override
+    public long count() {
+        return productRepository.count();
     }
 
     @Override

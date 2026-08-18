@@ -16,6 +16,7 @@ public class CartMapper {
         return new CartResponse(
                 cart.id(),
                 cart.customerId(),
+                cart.total(),
                 cart.createdAt(),
                 cart.updatedAt(),
                 cart.items().stream().map(this::toItemResponse).toList());
@@ -30,6 +31,8 @@ public class CartMapper {
                 item.productId(),
                 item.productName(),
                 item.quantity(),
+                item.unitPrice(),
+                item.lineTotal(),
                 item.addedAt(),
                 item.updatedAt());
     }

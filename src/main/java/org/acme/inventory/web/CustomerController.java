@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import jakarta.validation.Valid;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +32,8 @@ import org.acme.inventory.dto.cart.CartResponse;
 import org.acme.inventory.dto.customer.CustomerRequest;
 import org.acme.inventory.dto.customer.CustomerResponse;
 import org.acme.inventory.dto.order.OrderResponse;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResponse;
 import org.acme.inventory.mapper.CartMapper;
 import org.acme.inventory.mapper.CustomerMapper;
 import org.acme.inventory.mapper.OrderMapper;
@@ -54,8 +57,9 @@ public class CustomerController {
     @GetMapping
     @Operation(summary = "List customers")
     @ApiResponse(responseCode = "200", description = "Customers returned")
-    public ResponseEntity<List<CustomerResponse>> getCustomers() {
-        return ResponseEntity.ok(customerMapper.toResponses(customerService.getCustomers()));
+    public ResponseEntity<PageResponse<CustomerResponse>> getCustomers(@ParameterObject PageQuery pageQuery) {
+        return ResponseEntity
+                .ok(PageResponse.from(customerService.getCustomers(pageQuery), customerMapper::toResponse));
     }
 
     @GetMapping("/{id}")

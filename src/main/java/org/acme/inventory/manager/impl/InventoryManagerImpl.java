@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.acme.inventory.domain.Inventory;
 import org.acme.inventory.dto.inventory.InventoryCreateRequest;
 import org.acme.inventory.dto.inventory.InventoryUpdateRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.manager.InventoryManager;
 import org.acme.inventory.repository.InventoryRepository;
 
@@ -24,6 +26,16 @@ public class InventoryManagerImpl implements InventoryManager {
     @Override
     public List<Inventory> getInventory() {
         return inventoryRepository.findAll();
+    }
+
+    @Override
+    public PageResult<Inventory> getInventory(PageQuery query) {
+        return inventoryRepository.findPage(query);
+    }
+
+    @Override
+    public long count() {
+        return inventoryRepository.count();
     }
 
     @Override

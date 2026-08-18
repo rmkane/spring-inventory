@@ -1,5 +1,6 @@
 package org.acme.inventory.repository.impl;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,10 @@ import lombok.RequiredArgsConstructor;
 import org.acme.inventory.domain.Cart;
 import org.acme.inventory.domain.CartItem;
 import org.acme.inventory.dto.cart.CartItemRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.repository.CartRepository;
+import org.acme.inventory.repository.SqlPaging;
 
 @Repository
 @RequiredArgsConstructor
@@ -38,6 +42,7 @@ public class CartRepositoryImpl implements CartRepository {
                 ci.cart_id,
                 ci.product_id,
                 p.name AS product_name,
+                p.price AS unit_price,
                 ci.quantity,
                 ci.added_at,
                 ci.updated_at
@@ -46,11 +51,43 @@ public class CartRepositoryImpl implements CartRepository {
             WHERE ci.cart_id IN (:cartIds)
             """;
 
+    private static final Map<String, String> SORT_COLUMNS = Map.of(
+            "id", "id",
+            "customerId", "(SELECT name FROM customers WHERE id = carts.customer_id)",
+            "items", "(SELECT count(*) FROM cart_items ci WHERE ci.cart_id = carts.id)",
+            "total", """
+                    (SELECT coalesce(sum(ci.quantity * p.price), 0)
+                     FROM cart_items ci
+                     JOIN products p ON p.id = ci.product_id
+                     WHERE ci.cart_id = carts.id)
+                    """,
+            "createdAt", "created_at",
+            "updatedAt", "updated_at");
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
     public List<Cart> findAll() {
         return attachItems(jdbcTemplate.query(SELECT_CARTS, CART_MAPPER));
+    }
+
+    @Override
+    public PageResult<Cart> findPage(PageQuery query) {
+        long total = count();
+        PageQuery effective = SqlPaging.resolve(query, SORT_COLUMNS, "updatedAt", "desc").clampTo(total);
+        if (total == 0) {
+            return new PageResult<>(List.of(), effective, total);
+        }
+        List<CartRow> carts = jdbcTemplate.query(
+                SELECT_CARTS + SqlPaging.orderByLimit(effective, SORT_COLUMNS),
+                SqlPaging.params(effective),
+                CART_MAPPER);
+        return new PageResult<>(attachItems(carts), effective, total);
+    }
+
+    @Override
+    public long count() {
+        return SqlPaging.count(jdbcTemplate, "SELECT count(*) FROM carts");
     }
 
     @Override
@@ -161,11 +198,12 @@ public class CartRepositoryImpl implements CartRepository {
             UUID productId,
             String productName,
             int quantity,
+            BigDecimal unitPrice,
             OffsetDateTime addedAt,
             OffsetDateTime updatedAt) {
 
         private CartItem toCartItem() {
-            return new CartItem(productId, productName, quantity, addedAt, updatedAt);
+            return new CartItem(productId, productName, quantity, unitPrice, addedAt, updatedAt);
         }
     }
 }

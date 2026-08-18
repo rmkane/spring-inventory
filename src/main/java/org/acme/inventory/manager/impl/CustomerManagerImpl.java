@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Customer;
 import org.acme.inventory.dto.customer.CustomerRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.manager.CustomerManager;
 import org.acme.inventory.repository.CustomerRepository;
 
@@ -23,6 +25,16 @@ public class CustomerManagerImpl implements CustomerManager {
     @Override
     public List<Customer> getCustomers() {
         return customerRepository.findAll();
+    }
+
+    @Override
+    public PageResult<Customer> getCustomers(PageQuery query) {
+        return customerRepository.findPage(query);
+    }
+
+    @Override
+    public long count() {
+        return customerRepository.count();
     }
 
     @Override

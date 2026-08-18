@@ -1,6 +1,7 @@
 package org.acme.inventory.repository.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,7 +15,10 @@ import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Customer;
 import org.acme.inventory.dto.customer.CustomerRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.repository.CustomerRepository;
+import org.acme.inventory.repository.SqlPaging;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,11 +31,37 @@ public class CustomerRepositoryImpl implements CustomerRepository {
             FROM customers
             """;
 
+    private static final Map<String, String> SORT_COLUMNS = Map.of(
+            "name", "name",
+            "email", "email",
+            "carts", "(SELECT count(*) FROM carts c WHERE c.customer_id = customers.id)",
+            "orders", "(SELECT count(*) FROM orders o WHERE o.customer_id = customers.id)",
+            "createdAt", "created_at",
+            "updatedAt", "updated_at");
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
     public List<Customer> findAll() {
         return jdbcTemplate.query(SELECT_CUSTOMERS, CUSTOMER_MAPPER);
+    }
+
+    @Override
+    public PageResult<Customer> findPage(PageQuery query) {
+        return SqlPaging.fetch(
+                jdbcTemplate,
+                "SELECT count(*) FROM customers",
+                SELECT_CUSTOMERS,
+                query,
+                SORT_COLUMNS,
+                "name",
+                "asc",
+                CUSTOMER_MAPPER);
+    }
+
+    @Override
+    public long count() {
+        return SqlPaging.count(jdbcTemplate, "SELECT count(*) FROM customers");
     }
 
     @Override

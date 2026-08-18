@@ -9,10 +9,10 @@
     <table>
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>On hand</th>
-            <th>Reserved</th>
+            <th th:replace="~{fragments/sort :: header('/ui/products', 'name', 'Name')}">Name</th>
+            <th th:replace="~{fragments/sort :: header('/ui/products', 'price', 'Price')}">Price</th>
+            <th th:replace="~{fragments/sort :: header('/ui/products', 'quantityOnHand', 'On hand')}">On hand</th>
+            <th th:replace="~{fragments/sort :: header('/ui/products', 'quantityReserved', 'Reserved')}">Reserved</th>
         </tr>
         </thead>
         <tbody>
@@ -24,6 +24,7 @@
         </tr>
         </tbody>
     </table>
+    <nav th:replace="~{fragments/pager :: pager('/ui/products')}"></nav>
 </section>
 </body>
 </html>

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Product;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.dto.product.ProductRequest;
 import org.acme.inventory.exception.ResourceNotFoundException;
 import org.acme.inventory.manager.ProductManager;
@@ -22,6 +24,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getProducts() {
         return productManager.getProducts();
+    }
+
+    @Override
+    public PageResult<Product> getProducts(PageQuery query) {
+        return productManager.getProducts(query);
+    }
+
+    @Override
+    public long count() {
+        return productManager.count();
     }
 
     @Override

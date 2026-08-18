@@ -1,11 +1,11 @@
 package org.acme.inventory.web;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 import jakarta.validation.Valid;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.dto.cart.CartRequest;
 import org.acme.inventory.dto.cart.CartResponse;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResponse;
 import org.acme.inventory.mapper.CartMapper;
 import org.acme.inventory.service.CartService;
 
@@ -44,8 +46,8 @@ public class CartController {
     @GetMapping
     @Operation(summary = "List carts")
     @ApiResponse(responseCode = "200", description = "Carts returned")
-    public ResponseEntity<List<CartResponse>> getCarts() {
-        return ResponseEntity.ok(cartMapper.toResponses(cartService.getCarts()));
+    public ResponseEntity<PageResponse<CartResponse>> getCarts(@ParameterObject PageQuery pageQuery) {
+        return ResponseEntity.ok(PageResponse.from(cartService.getCarts(pageQuery), cartMapper::toResponse));
     }
 
     @GetMapping("/{id}")

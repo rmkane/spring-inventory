@@ -1,0 +1,6 @@
+<th xmlns:th="http://www.thymeleaf.org" th:fragment="header(action, sortKey, label)">
+    <a class="sort-link"
+       th:classappend="${pageQuery.sortedBy(sortKey)} ? (${pageQuery.ascending()} ? ' is-asc' : ' is-desc')"
+       th:href="@{${action}(page=1, size=${pageQuery.size}, sort=${sortKey}, dir=${pageQuery.toggleDir(sortKey)})}"
+       th:text="${label}">Column</a>
+</th>

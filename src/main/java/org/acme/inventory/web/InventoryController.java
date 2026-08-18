@@ -1,11 +1,11 @@
 package org.acme.inventory.web;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 import jakarta.validation.Valid;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +30,8 @@ import lombok.RequiredArgsConstructor;
 import org.acme.inventory.dto.inventory.InventoryCreateRequest;
 import org.acme.inventory.dto.inventory.InventoryResponse;
 import org.acme.inventory.dto.inventory.InventoryUpdateRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResponse;
 import org.acme.inventory.mapper.InventoryMapper;
 import org.acme.inventory.service.InventoryService;
 
@@ -45,8 +47,9 @@ public class InventoryController {
     @GetMapping
     @Operation(summary = "List inventory")
     @ApiResponse(responseCode = "200", description = "Inventory returned")
-    public ResponseEntity<List<InventoryResponse>> getInventory() {
-        return ResponseEntity.ok(inventoryMapper.toResponses(inventoryService.getInventory()));
+    public ResponseEntity<PageResponse<InventoryResponse>> getInventory(@ParameterObject PageQuery pageQuery) {
+        return ResponseEntity
+                .ok(PageResponse.from(inventoryService.getInventory(pageQuery), inventoryMapper::toResponse));
     }
 
     @GetMapping("/{productId}")

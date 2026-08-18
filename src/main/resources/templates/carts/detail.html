@@ -9,12 +9,15 @@
     <article class="panel">
         <h1 class="page-title">Cart</h1>
         <p>Customer: <a th:href="@{/ui/customers/{id}(id=${customer.id})}" th:text="${customer.name}">Customer</a></p>
+        <p>Total: <span th:text="${#numbers.formatDecimal(cart.total(), 1, 2)}">0.00</span></p>
     </article>
     <table>
         <thead>
         <tr>
             <th>Product</th>
             <th>Quantity</th>
+            <th>Unit price</th>
+            <th>Line total</th>
             <th>Added</th>
         </tr>
         </thead>
@@ -22,6 +25,8 @@
         <tr th:each="item : ${cart.items}">
             <td><a th:href="@{/ui/products/{id}(id=${item.productId})}" th:text="${item.productName}">Name</a></td>
             <td th:text="${item.quantity}">1</td>
+            <td th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)}">0.00</td>
+            <td th:text="${#numbers.formatDecimal(item.lineTotal(), 1, 2)}">0.00</td>
             <td th:text="${#temporals.format(item.addedAt, 'yyyy-MM-dd HH:mm')}">date</td>
         </tr>
         </tbody>

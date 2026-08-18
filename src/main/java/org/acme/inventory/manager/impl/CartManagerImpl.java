@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.acme.inventory.domain.Cart;
 import org.acme.inventory.dto.cart.CartItemRequest;
 import org.acme.inventory.dto.cart.CartRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.manager.CartManager;
 import org.acme.inventory.repository.CartRepository;
 
@@ -26,6 +28,16 @@ public class CartManagerImpl implements CartManager {
     @Override
     public List<Cart> getCarts() {
         return cartRepository.findAll();
+    }
+
+    @Override
+    public PageResult<Cart> getCarts(PageQuery query) {
+        return cartRepository.findPage(query);
+    }
+
+    @Override
+    public long count() {
+        return cartRepository.count();
     }
 
     @Override

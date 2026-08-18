@@ -1,6 +1,7 @@
 package org.acme.inventory.repository.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,7 +14,10 @@ import org.springframework.stereotype.Repository;
 import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Inventory;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.repository.InventoryRepository;
+import org.acme.inventory.repository.SqlPaging;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,11 +30,35 @@ public class InventoryRepositoryImpl implements InventoryRepository {
             FROM inventory
             """;
 
+    private static final Map<String, String> SORT_COLUMNS = Map.of(
+            "productId", "(SELECT name FROM products WHERE id = inventory.product_id)",
+            "quantityOnHand", "quantity_on_hand",
+            "quantityReserved", "quantity_reserved",
+            "updatedAt", "updated_at");
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
     public List<Inventory> findAll() {
         return jdbcTemplate.query(SELECT_INVENTORY, INVENTORY_MAPPER);
+    }
+
+    @Override
+    public PageResult<Inventory> findPage(PageQuery query) {
+        return SqlPaging.fetch(
+                jdbcTemplate,
+                "SELECT count(*) FROM inventory",
+                SELECT_INVENTORY,
+                query,
+                SORT_COLUMNS,
+                "updatedAt",
+                "desc",
+                INVENTORY_MAPPER);
+    }
+
+    @Override
+    public long count() {
+        return SqlPaging.count(jdbcTemplate, "SELECT count(*) FROM inventory");
     }
 
     @Override

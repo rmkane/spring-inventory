@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.acme.inventory.domain.Order;
 import org.acme.inventory.dto.order.OrderItemRequest;
 import org.acme.inventory.dto.order.OrderRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.exception.ResourceNotFoundException;
 import org.acme.inventory.manager.OrderManager;
 import org.acme.inventory.manager.ProductManager;
@@ -26,6 +28,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getOrders() {
         return orderManager.getOrders();
+    }
+
+    @Override
+    public PageResult<Order> getOrders(PageQuery query) {
+        return orderManager.getOrders(query);
+    }
+
+    @Override
+    public long count() {
+        return orderManager.count();
     }
 
     @Override

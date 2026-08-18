@@ -5,10 +5,16 @@ import java.util.UUID;
 
 import org.acme.inventory.domain.Order;
 import org.acme.inventory.dto.order.OrderRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 
 public interface OrderService {
 
     List<Order> getOrders();
+
+    PageResult<Order> getOrders(PageQuery query);
+
+    long count();
 
     Order getOrderById(UUID id);
 

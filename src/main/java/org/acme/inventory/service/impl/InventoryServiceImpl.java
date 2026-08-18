@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.acme.inventory.domain.Inventory;
 import org.acme.inventory.dto.inventory.InventoryCreateRequest;
 import org.acme.inventory.dto.inventory.InventoryUpdateRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.exception.ResourceNotFoundException;
 import org.acme.inventory.manager.InventoryManager;
 import org.acme.inventory.service.InventoryService;
@@ -23,6 +25,16 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public List<Inventory> getInventory() {
         return inventoryManager.getInventory();
+    }
+
+    @Override
+    public PageResult<Inventory> getInventory(PageQuery query) {
+        return inventoryManager.getInventory(query);
+    }
+
+    @Override
+    public long count() {
+        return inventoryManager.count();
     }
 
     @Override

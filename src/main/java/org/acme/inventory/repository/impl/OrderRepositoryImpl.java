@@ -22,7 +22,10 @@ import org.acme.inventory.domain.Order;
 import org.acme.inventory.domain.OrderItem;
 import org.acme.inventory.domain.OrderStatus;
 import org.acme.inventory.dto.order.OrderItemRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.repository.OrderRepository;
+import org.acme.inventory.repository.SqlPaging;
 
 @Repository
 @RequiredArgsConstructor
@@ -57,11 +60,47 @@ public class OrderRepositoryImpl implements OrderRepository {
             WHERE oi.order_id IN (:orderIds)
             """;
 
+    private static final Map<String, String> SORT_COLUMNS = Map.ofEntries(
+            Map.entry("id", "id"),
+            Map.entry("customerId", "(SELECT name FROM customers WHERE id = orders.customer_id)"),
+            Map.entry("status", "status"),
+            Map.entry("items", "(SELECT count(*) FROM order_items oi WHERE oi.order_id = orders.id)"),
+            Map.entry("total", """
+                    (SELECT coalesce(sum(oi.quantity * oi.unit_price), 0)
+                     FROM order_items oi
+                     WHERE oi.order_id = orders.id)
+                    """),
+            Map.entry("createdAt", "created_at"),
+            Map.entry("updatedAt", "updated_at"),
+            Map.entry("paidAt", "paid_at"),
+            Map.entry("shippedAt", "shipped_at"),
+            Map.entry("completedAt", "completed_at"),
+            Map.entry("cancelledAt", "cancelled_at"));
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
     public List<Order> findAll() {
         return attachItems(jdbcTemplate.query(SELECT_ORDERS, ORDER_MAPPER));
+    }
+
+    @Override
+    public PageResult<Order> findPage(PageQuery query) {
+        long total = count();
+        PageQuery effective = SqlPaging.resolve(query, SORT_COLUMNS, "createdAt", "desc").clampTo(total);
+        if (total == 0) {
+            return new PageResult<>(List.of(), effective, total);
+        }
+        List<OrderRow> orders = jdbcTemplate.query(
+                SELECT_ORDERS + SqlPaging.orderByLimit(effective, SORT_COLUMNS),
+                SqlPaging.params(effective),
+                ORDER_MAPPER);
+        return new PageResult<>(attachItems(orders), effective, total);
+    }
+
+    @Override
+    public long count() {
+        return SqlPaging.count(jdbcTemplate, "SELECT count(*) FROM orders");
     }
 
     @Override

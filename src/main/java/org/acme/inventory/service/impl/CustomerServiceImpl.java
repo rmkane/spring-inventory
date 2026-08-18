@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Customer;
 import org.acme.inventory.dto.customer.CustomerRequest;
+import org.acme.inventory.dto.page.PageQuery;
+import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.exception.ResourceNotFoundException;
 import org.acme.inventory.manager.CustomerManager;
 import org.acme.inventory.service.CustomerService;
@@ -22,6 +24,16 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<Customer> getCustomers() {
         return customerManager.getCustomers();
+    }
+
+    @Override
+    public PageResult<Customer> getCustomers(PageQuery query) {
+        return customerManager.getCustomers(query);
+    }
+
+    @Override
+    public long count() {
+        return customerManager.count();
     }
 
     @Override
