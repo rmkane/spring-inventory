@@ -1,4 +1,4 @@
-package org.acme.inventory.web;
+package org.acme.inventory.web.legacy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -22,8 +22,8 @@ import org.acme.inventory.dto.product.ProductRequest;
 import org.acme.inventory.dto.product.ProductResponse;
 
 @Tag("integration")
-@Tag("modern")
-public class ProductControllerTest extends RestClientTestSuite {
+@Tag("legacy")
+public class ProductControllerTest extends TestSuite {
 
     @Test
     public void testGetAllProducts() {

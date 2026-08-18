@@ -1,4 +1,4 @@
-package org.acme.inventory.web;
+package org.acme.inventory.web.legacy;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,11 +20,14 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+/**
+ * RestTemplate against a manually started app on {@code http://localhost:8080}.
+ */
 public abstract class TestSuite {
 
     protected static final String BASE_URL = "http://localhost:8080";
 
-    private static final Path TEST_DIR = Paths.get("target/integration");
+    private static final Path TEST_DIR = Paths.get("target/integration/legacy");
 
     protected static RestTemplate restTemplate;
     protected static ObjectMapper objectMapper;

@@ -82,7 +82,8 @@ make help          # all targets
 make format        # Spotless apply
 make lint          # Spotless check
 make test          # unit tests
-make integration   # integration tests (app on :8080)
+make integration   # modern integration tests (Testcontainers)
+make legacy        # RestTemplate tests (app on :8080)
 make hooks         # install Git hooks
 make debug         # JDWP on 8787 (DEBUG_PORT=... to override)
 make db-down       # stop Postgres and drop the volume
@@ -93,13 +94,19 @@ Layering is controller → service → manager → repository. Domain types are 
 
 ## Tests
 
-Unit tests live in `src/test/java` and run with `make test` / `mvn test`. Integration tests are under `src/integration/test/java`, tagged `integration`, compiled in the default build, and run with:
+Unit tests live in `src/test/java` and run with `make test` / `mvn test`. Integration tests are under `src/integration/test/java`, tagged `integration`, compiled in the default build, and skipped by default Surefire.
+
+Modern tests (`org.acme.inventory.web`) use `@SpringBootTest`, Testcontainers Postgres, and `RestClient`. They do not need a running app:
 
 ```bash
 make integration
 ```
 
-Those tests expect the app on `http://localhost:8080`.
+Legacy tests (`org.acme.inventory.web.legacy`) use `RestTemplate` against a manually started app on `http://localhost:8080`:
+
+```bash
+make legacy
+```
 
 CI (`.github/workflows/ci.yml`) runs Spotless, unit tests, and package on `main` / `develop`.
 

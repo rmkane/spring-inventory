@@ -1,6 +1,6 @@
 .PHONY: help
 .PHONY: install clean
-.PHONY: format lint test integration hooks
+.PHONY: format lint test integration legacy hooks
 .PHONY: run debug
 .PHONY: db-up db-down up down
 
@@ -39,8 +39,11 @@ lint: ## Check Spotless formatting
 test: ## Run unit tests
 	$(MVN) test
 
-integration: ## Run integration tests (mvn test -Pintegration; app on :8080)
+integration: ## Run modern integration tests (Testcontainers; mvn test -Pintegration)
 	$(MVN) test -Pintegration
+
+legacy: ## Run RestTemplate tests against an app on :8080
+	$(MVN) test -Plegacy
 
 hooks: ## Install Git hooks from .githooks
 	./scripts/install_hooks.sh
