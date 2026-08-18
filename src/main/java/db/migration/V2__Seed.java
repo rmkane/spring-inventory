@@ -64,7 +64,7 @@ public class V2__Seed extends BaseJavaMigration {
                 ids.add(id);
                 statement.setObject(1, id);
                 statement.setString(2, faker.name().fullName());
-                statement.setString(3, faker.internet().username() + "." + i + "@example.com");
+                statement.setString(3, faker.credentials().username() + "." + i + "@example.com");
                 statement.addBatch();
             }
             statement.executeBatch();

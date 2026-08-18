@@ -39,4 +39,18 @@ public record PageResult<T>(List<T> content, PageQuery query, long totalElements
     public int lastPage() {
         return Math.max(1, totalPages());
     }
+
+    public long fromIndex() {
+        if (totalElements == 0) {
+            return 0;
+        }
+        return (long) (page() - 1) * size() + 1;
+    }
+
+    public long toIndex() {
+        if (totalElements == 0) {
+            return 0;
+        }
+        return Math.min((long) page() * size(), totalElements);
+    }
 }
