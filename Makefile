@@ -1,4 +1,8 @@
-.PHONY: help install clean test run debug format lint hooks db-up db-down up down
+.PHONY: help
+.PHONY: install clean
+.PHONY: format lint test integration hooks
+.PHONY: run debug
+.PHONY: db-up db-down up down
 
 .DEFAULT_GOAL := help
 
@@ -34,6 +38,9 @@ lint: ## Check Spotless formatting
 
 test: ## Run unit tests
 	$(MVN) test
+
+integration: ## Run integration tests (mvn test -Pintegration; app on :8080)
+	$(MVN) test -Pintegration
 
 hooks: ## Install Git hooks from .githooks
 	./scripts/install_hooks.sh

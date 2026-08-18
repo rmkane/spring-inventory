@@ -82,6 +82,7 @@ make help          # all targets
 make format        # Spotless apply
 make lint          # Spotless check
 make test          # unit tests
+make integration   # integration tests (app on :8080)
 make hooks         # install Git hooks
 make debug         # JDWP on 8787 (DEBUG_PORT=... to override)
 make db-down       # stop Postgres and drop the volume
@@ -95,7 +96,7 @@ Layering is controller → service → manager → repository. Domain types are 
 Unit tests live in `src/test/java` and run with `make test` / `mvn test`. Integration tests are under `src/integration/test/java`, tagged `integration`, compiled in the default build, and run with:
 
 ```bash
-mvn test -Pintegration
+make integration
 ```
 
 Those tests expect the app on `http://localhost:8080`.
