@@ -79,12 +79,13 @@ Lists include sortable headers and a pager (page size, range, page jump, prev/ne
 
 ```bash
 make help          # all targets
+make hooks         # install Git hooks (once per clone)
 make format        # Spotless apply
 make lint          # Spotless check
 make test          # unit tests
+make check         # lint and unit tests
 make integration   # modern integration tests (Testcontainers)
 make legacy        # RestTemplate tests (app on :8080)
-make hooks         # install Git hooks
 make debug         # JDWP on 8787 (DEBUG_PORT=... to override)
 make db-down       # stop Postgres and drop the volume
 make down          # stop Compose

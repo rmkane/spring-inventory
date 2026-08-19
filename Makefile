@@ -1,6 +1,7 @@
 .PHONY: help
+.PHONY: hooks
 .PHONY: install clean
-.PHONY: format lint test integration legacy hooks
+.PHONY: format lint test check integration legacy
 .PHONY: run debug
 .PHONY: db-up db-down up down
 
@@ -22,6 +23,10 @@ help: ## Display this help message
 		/^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } \
 		/^[a-zA-Z_-]+:.*?## / { printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
+##@ Setup
+hooks: ## Install Git hooks from .githooks (once per clone)
+	./scripts/install_hooks.sh
+
 ##@ Build
 install: ## Clean build and install to local Maven repo
 	$(MVN) clean install
@@ -39,14 +44,13 @@ lint: ## Check Spotless formatting
 test: ## Run unit tests
 	$(MVN) test
 
+check: lint test ## Lint and run unit tests
+
 integration: ## Run modern integration tests (Testcontainers; mvn test -Pintegration)
 	$(MVN) test -Pintegration
 
 legacy: ## Run RestTemplate tests against an app on :8080
 	$(MVN) test -Plegacy
-
-hooks: ## Install Git hooks from .githooks
-	./scripts/install_hooks.sh
 
 ##@ App
 run: ## Start the app (expects Postgres on localhost:5432)
