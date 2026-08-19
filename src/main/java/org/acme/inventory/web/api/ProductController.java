@@ -1,4 +1,4 @@
-package org.acme.inventory.web;
+package org.acme.inventory.web.api;
 
 import java.net.URI;
 import java.util.UUID;
