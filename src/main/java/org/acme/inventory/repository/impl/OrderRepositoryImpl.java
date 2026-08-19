@@ -11,14 +11,11 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-
-import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Order;
 import org.acme.inventory.domain.OrderItem;
@@ -27,14 +24,12 @@ import org.acme.inventory.dto.order.OrderItemRequest;
 import org.acme.inventory.dto.page.PageQuery;
 import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.repository.OrderRepository;
-import org.acme.inventory.repository.SqlPaging;
+import org.acme.inventory.repository.sql.SqlDateTimes;
+import org.acme.inventory.repository.sql.SqlPaging;
+import org.acme.inventory.repository.sql.SqlRowMapper;
 
 @Repository
-@RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
-
-    private static final RowMapper<OrderRow> ORDER_MAPPER = DataClassRowMapper.newInstance(OrderRow.class);
-    private static final RowMapper<OrderItemRow> ORDER_ITEM_MAPPER = new OrderItemMapper();
 
     private static final String SELECT_ORDERS = """
             SELECT
@@ -80,10 +75,20 @@ public class OrderRepositoryImpl implements OrderRepository {
             Map.entry("cancelledAt", "cancelled_at"));
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final SqlDateTimes sqlDateTimes;
+    private final RowMapper<OrderRow> orderMapper;
+    private final RowMapper<OrderItemRow> orderItemMapper;
+
+    public OrderRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate, SqlDateTimes sqlDateTimes) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.sqlDateTimes = sqlDateTimes;
+        this.orderMapper = new OrderMapper(sqlDateTimes);
+        this.orderItemMapper = new OrderItemMapper(sqlDateTimes);
+    }
 
     @Override
     public List<Order> findAll() {
-        return attachItems(jdbcTemplate.query(SELECT_ORDERS, ORDER_MAPPER));
+        return attachItems(jdbcTemplate.query(SELECT_ORDERS, orderMapper));
     }
 
     @Override
@@ -96,7 +101,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         List<OrderRow> orders = jdbcTemplate.query(
                 SELECT_ORDERS + SqlPaging.orderByLimit(effective, SORT_COLUMNS),
                 SqlPaging.params(effective),
-                ORDER_MAPPER);
+                orderMapper);
         return new PageResult<>(attachItems(orders), effective, total);
     }
 
@@ -110,7 +115,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         List<OrderRow> orders = jdbcTemplate.query(
                 SELECT_ORDERS + " WHERE id = :id",
                 new MapSqlParameterSource("id", id),
-                ORDER_MAPPER);
+                orderMapper);
         return attachItems(orders).stream().findFirst();
     }
 
@@ -119,7 +124,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         List<OrderRow> orders = jdbcTemplate.query(
                 SELECT_ORDERS + " WHERE customer_id = :customerId",
                 new MapSqlParameterSource("customerId", customerId),
-                ORDER_MAPPER);
+                orderMapper);
         return attachItems(orders);
     }
 
@@ -213,7 +218,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         Map<UUID, List<OrderItem>> itemsByOrderId = jdbcTemplate.query(
                 SELECT_ORDER_ITEMS,
                 new MapSqlParameterSource("orderIds", orderIds),
-                ORDER_ITEM_MAPPER)
+                orderItemMapper)
                 .stream()
                 .collect(Collectors.groupingBy(
                         OrderItemRow::orderId,
@@ -224,7 +229,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .toList();
     }
 
-    private static MapSqlParameterSource orderParams(
+    private MapSqlParameterSource orderParams(
             UUID id,
             UUID customerId,
             OrderStatus status,
@@ -236,10 +241,10 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .addValue("id", id)
                 .addValue("customerId", customerId)
                 .addValue("status", status.name().toLowerCase(Locale.ROOT))
-                .addValue("paidAt", paidAt)
-                .addValue("shippedAt", shippedAt)
-                .addValue("completedAt", completedAt)
-                .addValue("cancelledAt", cancelledAt);
+                .addValue("paidAt", sqlDateTimes.bind(paidAt))
+                .addValue("shippedAt", sqlDateTimes.bind(shippedAt))
+                .addValue("completedAt", sqlDateTimes.bind(completedAt))
+                .addValue("cancelledAt", sqlDateTimes.bind(cancelledAt));
     }
 
     private record OrderRow(
@@ -280,17 +285,39 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
     }
 
-    // NOTE: Could just use DataClassRowMapper.newInstance(OrderItemRow.class)
-    // but want to show how to do it manually for demonstration purposes
-    private static final class OrderItemMapper implements RowMapper<OrderItemRow> {
+    private static final class OrderMapper extends SqlRowMapper<OrderRow> {
+        private OrderMapper(SqlDateTimes sqlDateTimes) {
+            super(sqlDateTimes);
+        }
+
+        @Override
+        public OrderRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new OrderRow(
+                    getUuid(rs, "id"),
+                    getUuid(rs, "customer_id"),
+                    getEnum(rs, "status", OrderStatus.class),
+                    getOffsetDateTime(rs, "created_at"),
+                    getOffsetDateTime(rs, "updated_at"),
+                    getOffsetDateTime(rs, "paid_at"),
+                    getOffsetDateTime(rs, "shipped_at"),
+                    getOffsetDateTime(rs, "completed_at"),
+                    getOffsetDateTime(rs, "cancelled_at"));
+        }
+    }
+
+    private static final class OrderItemMapper extends SqlRowMapper<OrderItemRow> {
+        private OrderItemMapper(SqlDateTimes sqlDateTimes) {
+            super(sqlDateTimes);
+        }
+
         @Override
         public OrderItemRow mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new OrderItemRow(
-                    rs.getObject("order_id", UUID.class),
-                    rs.getObject("product_id", UUID.class),
-                    rs.getString("product_name"),
-                    rs.getInt("quantity"),
-                    rs.getBigDecimal("unit_price"));
+                    getUuid(rs, "order_id"),
+                    getUuid(rs, "product_id"),
+                    getString(rs, "product_name"),
+                    getInt(rs, "quantity"),
+                    getBigDecimal(rs, "unit_price"));
         }
     }
 }

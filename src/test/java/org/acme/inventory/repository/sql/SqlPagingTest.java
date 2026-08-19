@@ -1,4 +1,4 @@
-package org.acme.inventory.repository;
+package org.acme.inventory.repository.sql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

@@ -1,6 +1,8 @@
 package org.acme.inventory.repository.impl;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -8,14 +10,11 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-
-import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Cart;
 import org.acme.inventory.domain.CartItem;
@@ -23,14 +22,12 @@ import org.acme.inventory.dto.cart.CartItemRequest;
 import org.acme.inventory.dto.page.PageQuery;
 import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.repository.CartRepository;
-import org.acme.inventory.repository.SqlPaging;
+import org.acme.inventory.repository.sql.SqlDateTimes;
+import org.acme.inventory.repository.sql.SqlPaging;
+import org.acme.inventory.repository.sql.SqlRowMapper;
 
 @Repository
-@RequiredArgsConstructor
 public class CartRepositoryImpl implements CartRepository {
-
-    private static final RowMapper<CartRow> CART_MAPPER = DataClassRowMapper.newInstance(CartRow.class);
-    private static final RowMapper<CartItemRow> CART_ITEM_MAPPER = DataClassRowMapper.newInstance(CartItemRow.class);
 
     private static final String SELECT_CARTS = """
             SELECT id, customer_id, created_at, updated_at
@@ -65,10 +62,18 @@ public class CartRepositoryImpl implements CartRepository {
             "updatedAt", "updated_at");
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final RowMapper<CartRow> cartMapper;
+    private final RowMapper<CartItemRow> cartItemMapper;
+
+    public CartRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate, SqlDateTimes sqlDateTimes) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.cartMapper = new CartMapper(sqlDateTimes);
+        this.cartItemMapper = new CartItemMapper(sqlDateTimes);
+    }
 
     @Override
     public List<Cart> findAll() {
-        return attachItems(jdbcTemplate.query(SELECT_CARTS, CART_MAPPER));
+        return attachItems(jdbcTemplate.query(SELECT_CARTS, cartMapper));
     }
 
     @Override
@@ -81,7 +86,7 @@ public class CartRepositoryImpl implements CartRepository {
         List<CartRow> carts = jdbcTemplate.query(
                 SELECT_CARTS + SqlPaging.orderByLimit(effective, SORT_COLUMNS),
                 SqlPaging.params(effective),
-                CART_MAPPER);
+                cartMapper);
         return new PageResult<>(attachItems(carts), effective, total);
     }
 
@@ -95,7 +100,7 @@ public class CartRepositoryImpl implements CartRepository {
         List<CartRow> carts = jdbcTemplate.query(
                 SELECT_CARTS + " WHERE id = :id",
                 new MapSqlParameterSource("id", id),
-                CART_MAPPER);
+                cartMapper);
         return attachItems(carts).stream().findFirst();
     }
 
@@ -104,7 +109,7 @@ public class CartRepositoryImpl implements CartRepository {
         List<CartRow> carts = jdbcTemplate.query(
                 SELECT_CARTS + " WHERE customer_id = :customerId",
                 new MapSqlParameterSource("customerId", customerId),
-                CART_MAPPER);
+                cartMapper);
         return attachItems(carts);
     }
 
@@ -171,7 +176,7 @@ public class CartRepositoryImpl implements CartRepository {
         Map<UUID, List<CartItem>> itemsByCartId = jdbcTemplate.query(
                 SELECT_CART_ITEMS,
                 new MapSqlParameterSource("cartIds", cartIds),
-                CART_ITEM_MAPPER)
+                cartItemMapper)
                 .stream()
                 .collect(Collectors.groupingBy(
                         CartItemRow::cartId,
@@ -204,6 +209,39 @@ public class CartRepositoryImpl implements CartRepository {
 
         private CartItem toCartItem() {
             return new CartItem(productId, productName, quantity, unitPrice, addedAt, updatedAt);
+        }
+    }
+
+    private static final class CartMapper extends SqlRowMapper<CartRow> {
+        private CartMapper(SqlDateTimes sqlDateTimes) {
+            super(sqlDateTimes);
+        }
+
+        @Override
+        public CartRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new CartRow(
+                    getUuid(rs, "id"),
+                    getUuid(rs, "customer_id"),
+                    getOffsetDateTime(rs, "created_at"),
+                    getOffsetDateTime(rs, "updated_at"));
+        }
+    }
+
+    private static final class CartItemMapper extends SqlRowMapper<CartItemRow> {
+        private CartItemMapper(SqlDateTimes sqlDateTimes) {
+            super(sqlDateTimes);
+        }
+
+        @Override
+        public CartItemRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new CartItemRow(
+                    getUuid(rs, "cart_id"),
+                    getUuid(rs, "product_id"),
+                    getString(rs, "product_name"),
+                    getInt(rs, "quantity"),
+                    getBigDecimal(rs, "unit_price"),
+                    getOffsetDateTime(rs, "added_at"),
+                    getOffsetDateTime(rs, "updated_at"));
         }
     }
 }

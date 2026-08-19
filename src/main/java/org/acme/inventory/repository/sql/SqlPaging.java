@@ -1,4 +1,4 @@
-package org.acme.inventory.repository;
+package org.acme.inventory.repository.sql;
 
 import java.util.List;
 import java.util.Map;
