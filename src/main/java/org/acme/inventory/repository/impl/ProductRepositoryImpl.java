@@ -1,27 +1,26 @@
 package org.acme.inventory.repository.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Product;
 import org.acme.inventory.dto.page.PageQuery;
 import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.dto.product.ProductRequest;
 import org.acme.inventory.repository.ProductRepository;
-import org.acme.inventory.repository.sql.SqlDateTimes;
+import org.acme.inventory.repository.mapper.product.ProductRowMapper;
 import org.acme.inventory.repository.sql.SqlPaging;
-import org.acme.inventory.repository.sql.SqlRowMapper;
 
 @Repository
+@RequiredArgsConstructor
 public class ProductRepositoryImpl implements ProductRepository {
 
     private static final String SELECT_PRODUCTS = """
@@ -47,12 +46,7 @@ public class ProductRepositoryImpl implements ProductRepository {
             "updatedAt", "p.updated_at");
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final RowMapper<Product> productMapper;
-
-    public ProductRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate, SqlDateTimes sqlDateTimes) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.productMapper = new ProductMapper(sqlDateTimes);
-    }
+    private final ProductRowMapper productMapper;
 
     @Override
     public List<Product> findAll() {
@@ -126,24 +120,5 @@ public class ProductRepositoryImpl implements ProductRepository {
                 .addValue("name", request.name())
                 .addValue("description", request.description())
                 .addValue("price", request.price());
-    }
-
-    private static final class ProductMapper extends SqlRowMapper<Product> {
-        private ProductMapper(SqlDateTimes sqlDateTimes) {
-            super(sqlDateTimes);
-        }
-
-        @Override
-        public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Product(
-                    getUuid(rs, "id"),
-                    getString(rs, "name"),
-                    getString(rs, "description"),
-                    getBigDecimal(rs, "price"),
-                    getInt(rs, "quantity_on_hand"),
-                    getInt(rs, "quantity_reserved"),
-                    getOffsetDateTime(rs, "created_at"),
-                    getOffsetDateTime(rs, "updated_at"));
-        }
     }
 }

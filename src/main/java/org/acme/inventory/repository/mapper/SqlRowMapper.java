@@ -1,4 +1,4 @@
-package org.acme.inventory.repository.sql;
+package org.acme.inventory.repository.mapper;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -13,6 +13,8 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import org.springframework.jdbc.core.RowMapper;
+
+import org.acme.inventory.repository.sql.SqlDateTimes;
 
 public abstract class SqlRowMapper<T> implements RowMapper<T> {
 

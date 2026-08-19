@@ -1,27 +1,26 @@
 package org.acme.inventory.repository.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Customer;
 import org.acme.inventory.dto.customer.CustomerRequest;
 import org.acme.inventory.dto.page.PageQuery;
 import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.repository.CustomerRepository;
-import org.acme.inventory.repository.sql.SqlDateTimes;
+import org.acme.inventory.repository.mapper.customer.CustomerRowMapper;
 import org.acme.inventory.repository.sql.SqlPaging;
-import org.acme.inventory.repository.sql.SqlRowMapper;
 
 @Repository
+@RequiredArgsConstructor
 public class CustomerRepositoryImpl implements CustomerRepository {
 
     private static final String SELECT_CUSTOMERS = """
@@ -38,12 +37,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
             "updatedAt", "updated_at");
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final RowMapper<Customer> customerMapper;
-
-    public CustomerRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate, SqlDateTimes sqlDateTimes) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.customerMapper = new CustomerMapper(sqlDateTimes);
-    }
+    private final CustomerRowMapper customerMapper;
 
     @Override
     public List<Customer> findAll() {
@@ -116,21 +110,5 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 .addValue("id", id)
                 .addValue("name", request.name())
                 .addValue("email", request.email());
-    }
-
-    private static final class CustomerMapper extends SqlRowMapper<Customer> {
-        private CustomerMapper(SqlDateTimes sqlDateTimes) {
-            super(sqlDateTimes);
-        }
-
-        @Override
-        public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Customer(
-                    getUuid(rs, "id"),
-                    getString(rs, "name"),
-                    getString(rs, "email"),
-                    getOffsetDateTime(rs, "created_at"),
-                    getOffsetDateTime(rs, "updated_at"));
-        }
     }
 }

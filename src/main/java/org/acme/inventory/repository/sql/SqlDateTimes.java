@@ -45,7 +45,7 @@ public class SqlDateTimes implements InitializingBean {
     /**
      * Test constructor that skips the DataSource probe.
      */
-    SqlDateTimes(String databaseProductName) {
+    public SqlDateTimes(String databaseProductName) {
         this.dataSource = null;
         applyDatabaseProduct(databaseProductName);
     }

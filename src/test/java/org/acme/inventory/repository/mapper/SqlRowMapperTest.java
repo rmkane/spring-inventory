@@ -1,4 +1,4 @@
-package org.acme.inventory.repository.sql;
+package org.acme.inventory.repository.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -16,6 +16,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
+
+import org.acme.inventory.repository.sql.SqlDateTimes;
 
 class SqlRowMapperTest {
 

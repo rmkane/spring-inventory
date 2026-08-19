@@ -1,20 +1,17 @@
 package org.acme.inventory.repository.impl;
 
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+
+import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Cart;
 import org.acme.inventory.domain.CartItem;
@@ -22,11 +19,14 @@ import org.acme.inventory.dto.cart.CartItemRequest;
 import org.acme.inventory.dto.page.PageQuery;
 import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.repository.CartRepository;
-import org.acme.inventory.repository.sql.SqlDateTimes;
+import org.acme.inventory.repository.mapper.cart.CartItemRow;
+import org.acme.inventory.repository.mapper.cart.CartItemRowMapper;
+import org.acme.inventory.repository.mapper.cart.CartRow;
+import org.acme.inventory.repository.mapper.cart.CartRowMapper;
 import org.acme.inventory.repository.sql.SqlPaging;
-import org.acme.inventory.repository.sql.SqlRowMapper;
 
 @Repository
+@RequiredArgsConstructor
 public class CartRepositoryImpl implements CartRepository {
 
     private static final String SELECT_CARTS = """
@@ -62,14 +62,8 @@ public class CartRepositoryImpl implements CartRepository {
             "updatedAt", "updated_at");
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final RowMapper<CartRow> cartMapper;
-    private final RowMapper<CartItemRow> cartItemMapper;
-
-    public CartRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate, SqlDateTimes sqlDateTimes) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.cartMapper = new CartMapper(sqlDateTimes);
-        this.cartItemMapper = new CartItemMapper(sqlDateTimes);
-    }
+    private final CartRowMapper cartMapper;
+    private final CartItemRowMapper cartItemMapper;
 
     @Override
     public List<Cart> findAll() {
@@ -185,63 +179,5 @@ public class CartRepositoryImpl implements CartRepository {
         return carts.stream()
                 .map(cart -> cart.toCart(itemsByCartId.getOrDefault(cart.id(), List.of())))
                 .toList();
-    }
-
-    private record CartRow(
-            UUID id,
-            UUID customerId,
-            OffsetDateTime createdAt,
-            OffsetDateTime updatedAt) {
-
-        private Cart toCart(List<CartItem> items) {
-            return new Cart(id, customerId, createdAt, updatedAt, List.copyOf(items));
-        }
-    }
-
-    private record CartItemRow(
-            UUID cartId,
-            UUID productId,
-            String productName,
-            int quantity,
-            BigDecimal unitPrice,
-            OffsetDateTime addedAt,
-            OffsetDateTime updatedAt) {
-
-        private CartItem toCartItem() {
-            return new CartItem(productId, productName, quantity, unitPrice, addedAt, updatedAt);
-        }
-    }
-
-    private static final class CartMapper extends SqlRowMapper<CartRow> {
-        private CartMapper(SqlDateTimes sqlDateTimes) {
-            super(sqlDateTimes);
-        }
-
-        @Override
-        public CartRow mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new CartRow(
-                    getUuid(rs, "id"),
-                    getUuid(rs, "customer_id"),
-                    getOffsetDateTime(rs, "created_at"),
-                    getOffsetDateTime(rs, "updated_at"));
-        }
-    }
-
-    private static final class CartItemMapper extends SqlRowMapper<CartItemRow> {
-        private CartItemMapper(SqlDateTimes sqlDateTimes) {
-            super(sqlDateTimes);
-        }
-
-        @Override
-        public CartItemRow mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new CartItemRow(
-                    getUuid(rs, "cart_id"),
-                    getUuid(rs, "product_id"),
-                    getString(rs, "product_name"),
-                    getInt(rs, "quantity"),
-                    getBigDecimal(rs, "unit_price"),
-                    getOffsetDateTime(rs, "added_at"),
-                    getOffsetDateTime(rs, "updated_at"));
-        }
     }
 }

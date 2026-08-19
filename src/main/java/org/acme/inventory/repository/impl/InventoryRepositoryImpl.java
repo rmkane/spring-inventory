@@ -1,26 +1,25 @@
 package org.acme.inventory.repository.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import lombok.RequiredArgsConstructor;
 
 import org.acme.inventory.domain.Inventory;
 import org.acme.inventory.dto.page.PageQuery;
 import org.acme.inventory.dto.page.PageResult;
 import org.acme.inventory.repository.InventoryRepository;
-import org.acme.inventory.repository.sql.SqlDateTimes;
+import org.acme.inventory.repository.mapper.inventory.InventoryRowMapper;
 import org.acme.inventory.repository.sql.SqlPaging;
-import org.acme.inventory.repository.sql.SqlRowMapper;
 
 @Repository
+@RequiredArgsConstructor
 public class InventoryRepositoryImpl implements InventoryRepository {
 
     private static final String SELECT_INVENTORY = """
@@ -35,12 +34,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
             "updatedAt", "updated_at");
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final RowMapper<Inventory> inventoryMapper;
-
-    public InventoryRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate, SqlDateTimes sqlDateTimes) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.inventoryMapper = new InventoryMapper(sqlDateTimes);
-    }
+    private final InventoryRowMapper inventoryMapper;
 
     @Override
     public List<Inventory> findAll() {
@@ -112,20 +106,5 @@ public class InventoryRepositoryImpl implements InventoryRepository {
                 .addValue("productId", productId)
                 .addValue("quantityOnHand", quantityOnHand)
                 .addValue("quantityReserved", quantityReserved);
-    }
-
-    private static final class InventoryMapper extends SqlRowMapper<Inventory> {
-        private InventoryMapper(SqlDateTimes sqlDateTimes) {
-            super(sqlDateTimes);
-        }
-
-        @Override
-        public Inventory mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Inventory(
-                    getUuid(rs, "product_id"),
-                    getInt(rs, "quantity_on_hand"),
-                    getInt(rs, "quantity_reserved"),
-                    getOffsetDateTime(rs, "updated_at"));
-        }
     }
 }
