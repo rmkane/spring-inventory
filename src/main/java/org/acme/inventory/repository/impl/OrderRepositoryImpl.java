@@ -1,6 +1,8 @@
 package org.acme.inventory.repository.impl;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +34,7 @@ import org.acme.inventory.repository.SqlPaging;
 public class OrderRepositoryImpl implements OrderRepository {
 
     private static final RowMapper<OrderRow> ORDER_MAPPER = DataClassRowMapper.newInstance(OrderRow.class);
-    private static final RowMapper<OrderItemRow> ORDER_ITEM_MAPPER = DataClassRowMapper.newInstance(OrderItemRow.class);
+    private static final RowMapper<OrderItemRow> ORDER_ITEM_MAPPER = new OrderItemMapper();
 
     private static final String SELECT_ORDERS = """
             SELECT
@@ -275,6 +277,20 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         private OrderItem toOrderItem() {
             return new OrderItem(productId, productName, quantity, unitPrice);
+        }
+    }
+
+    // NOTE: Could just use DataClassRowMapper.newInstance(OrderItemRow.class)
+    // but want to show how to do it manually for demonstration purposes
+    private static final class OrderItemMapper implements RowMapper<OrderItemRow> {
+        @Override
+        public OrderItemRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new OrderItemRow(
+                    rs.getObject("order_id", UUID.class),
+                    rs.getObject("product_id", UUID.class),
+                    rs.getString("product_name"),
+                    rs.getInt("quantity"),
+                    rs.getBigDecimal("unit_price"));
         }
     }
 }

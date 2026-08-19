@@ -40,7 +40,7 @@ public class InventoryManagerImpl implements InventoryManager {
 
     @Override
     public Optional<Inventory> getInventoryByProductId(UUID productId) {
-        return inventoryRepository.findByProductId(productId);
+        return inventoryRepository.findById(productId);
     }
 
     @Override
@@ -58,6 +58,6 @@ public class InventoryManagerImpl implements InventoryManager {
     @Override
     @Transactional
     public boolean deleteInventory(UUID productId) {
-        return inventoryRepository.deleteByProductId(productId);
+        return inventoryRepository.deleteById(productId);
     }
 }

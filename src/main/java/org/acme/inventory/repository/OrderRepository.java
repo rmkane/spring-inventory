@@ -8,18 +8,8 @@ import java.util.UUID;
 import org.acme.inventory.domain.Order;
 import org.acme.inventory.domain.OrderStatus;
 import org.acme.inventory.dto.order.OrderItemRequest;
-import org.acme.inventory.dto.page.PageQuery;
-import org.acme.inventory.dto.page.PageResult;
 
-public interface OrderRepository {
-
-    List<Order> findAll();
-
-    PageResult<Order> findPage(PageQuery query);
-
-    long count();
-
-    Optional<Order> findById(UUID id);
+public interface OrderRepository extends JdbcRepository<Order, UUID> {
 
     List<Order> findByCustomerId(UUID customerId);
 
@@ -41,6 +31,4 @@ public interface OrderRepository {
             OffsetDateTime completedAt,
             OffsetDateTime cancelledAt,
             List<OrderItemRequest> items);
-
-    boolean deleteById(UUID id);
 }

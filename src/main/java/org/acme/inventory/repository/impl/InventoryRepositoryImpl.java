@@ -62,7 +62,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
     }
 
     @Override
-    public Optional<Inventory> findByProductId(UUID productId) {
+    public Optional<Inventory> findById(UUID productId) {
         List<Inventory> inventory = jdbcTemplate.query(
                 SELECT_INVENTORY + " WHERE product_id = :productId",
                 new MapSqlParameterSource("productId", productId),
@@ -78,7 +78,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
                         VALUES (:productId, :quantityOnHand, :quantityReserved)
                         """,
                 inventoryParams(productId, quantityOnHand, quantityReserved));
-        return findByProductId(productId).orElseThrow();
+        return findById(productId).orElseThrow();
     }
 
     @Override
@@ -93,11 +93,11 @@ public class InventoryRepositoryImpl implements InventoryRepository {
         if (updated == 0) {
             return Optional.empty();
         }
-        return findByProductId(productId);
+        return findById(productId);
     }
 
     @Override
-    public boolean deleteByProductId(UUID productId) {
+    public boolean deleteById(UUID productId) {
         return jdbcTemplate.update(
                 "DELETE FROM inventory WHERE product_id = :productId",
                 new MapSqlParameterSource("productId", productId)) > 0;
