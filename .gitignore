@@ -3,7 +3,16 @@ target/
 
 # IntelliJ
 .idea/
+*.iml
+
+# Visual Studio Code
 .vscode/
+!.vscode/launch.json
+
+# Eclipse
+.settings/
+.classpath
+.project
 
 # macOS
 .DS_Store

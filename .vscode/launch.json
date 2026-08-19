@@ -1,0 +1,11 @@
+{
+  "configurations": [
+    {
+      "name": "Java Debugger: Attach",
+      "type": "java",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 8787
+    }
+  ]
+}
